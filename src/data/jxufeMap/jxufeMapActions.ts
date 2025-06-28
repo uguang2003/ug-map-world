@@ -17,5 +17,7 @@ export function flyToDormLabelView(map: Map) {
 export function handleDormLabelClick(map: Map, event: any) {
   if (event.graphic && event.graphic.attr && event.graphic.attr.id === "ug-dorm") {
     flyToDormLabelView(map);
+    // 超链接跳转到https://ug666.top/vr
+    // window.open("https://ug666.top/vr", "_blank");
   }
 }
