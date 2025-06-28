@@ -1,7 +1,7 @@
 {
-  "name": "zjc-3d",
+  "name": "ug-map-world",
   "version": "0.0.1",
-  "description": "芝加昌的数字孪生",
+  "description": "UG的地图世界三维数字孪生平台",
   "main": "main.ts",
   "scripts": {
     "serve": "vite",
@@ -38,10 +38,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/uguang2003/ZJC-3D.git"
+    "url": "https://github.com/uguang2003/ug-map-world.git"
   },
   "bugs": {
-    "url": "https://github.com/uguang2003/ZJC-3D/issues",
+    "url": "https://github.com/uguang2003/ug-map-world/issues",
     "email": "uguang2003@gmail.cn"
   },
   "keywords": [
