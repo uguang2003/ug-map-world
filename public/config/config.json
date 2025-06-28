@@ -1,6 +1,6 @@
 ﻿{
   "scene": {
-    "center": { "lat": 28.693587, "lng": 115.955460, "alt": 380, "heading": 0, "pitch": -90 },
+    "center": { "lat": 28.736464, "lng": 115.831852, "alt": 380, "heading": 0, "pitch": -90 },
     "scene3DOnly": false,
     "shadows": false,
     "removeDblClick": true,
