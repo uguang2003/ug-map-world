@@ -36,12 +36,14 @@ const marsOnload = (map: any) => {
   display: flex;
   flex-direction: column;
 }
+
 .ug-main {
   flex: 1;
   display: flex;
   position: relative;
   min-height: 0;
 }
+
 .ug-header-float {
   position: absolute;
   top: 0;

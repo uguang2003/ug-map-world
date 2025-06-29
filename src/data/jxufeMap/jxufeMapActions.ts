@@ -1,15 +1,10 @@
+import { flyToPosition, flyToLatLng } from "../mapUtils";
 import type { Map } from "mars3d";
 
 
 // 跳转到“UG的宿舍”标注视角
 export function flyToDormLabelView(map: Map) {
-  map.setCameraView({
-    lat: 28.736464,
-    lng: 115.831852,
-    alt: 380,
-    heading: 0,
-    pitch: -90,
-  });
+  flyToLatLng(map, 28.736464, 115.831852, 380, 0, -90);
 }
 
 

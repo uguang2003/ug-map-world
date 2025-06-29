@@ -1,6 +1,7 @@
 import * as mars3d from "mars3d";
 import { jxufeData } from "./jxufeMap/jxufeData";
 import { handleDormLabelClick } from "./jxufeMap/jxufeMapActions";
+import { addNanchangSpots } from "./famousSpots/nanchangSpots";
 
 export function initMap(map: mars3d.Map) {
   const graphicLayer = new mars3d.layer.GraphicLayer();
@@ -31,4 +32,7 @@ export function initMap(map: mars3d.Map) {
 
   // 添加数据
   jxufeData.addJXUFE(graphicLayer);
+
+  // 添加南昌著名景点标注
+  addNanchangSpots(graphicLayer);
 }
