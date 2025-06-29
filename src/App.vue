@@ -3,7 +3,7 @@
     <div class="ug-main">
       <MarsMap :url="configUrl" map-key="ug-default-map" @onload="marsOnload" />
       <UgLocationList :mapInstance="mapInstance" :show="showLocationList" />
-      <UgHeader class="ug-header-float" @toggle-list="toggleLocationList" />
+      <UgHeader class="ug-header-float" :showList="showLocationList" @toggle-list="toggleLocationList" />
     </div>
   </div>
 </template>
@@ -17,7 +17,7 @@ import { ref } from "vue";
 const configUrl = "config/config.json";
 
 const mapInstance = ref<any>(null);
-const showLocationList = ref(true);
+const showLocationList = ref(false);
 
 const toggleLocationList = () => {
   showLocationList.value = !showLocationList.value;
