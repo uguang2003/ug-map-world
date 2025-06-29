@@ -14,7 +14,7 @@
 import MarsMap from "./components/mars-work/mars-map.vue";
 import UgHeader from "./layout/UgHeader.vue";
 import UgLocationList from "./layout/UgLocationList.vue";
-import RomanticMask from "./components/RomanticMask.vue";
+import RomanticMask from "./layout/RomanticMask.vue";
 import { initMap } from "./data/mapInit";
 import { ref } from "vue";
 const configUrl = "config/config.json";
