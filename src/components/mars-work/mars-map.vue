@@ -94,46 +94,48 @@ function interceptCanvasDrawing() {
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext('2d')!
-    
-    // 设置完全透明
     ctx.clearRect(0, 0, width, height)
     ctx.globalCompositeOperation = 'source-over'
     ctx.fillStyle = 'rgba(0, 0, 0, 0)'
     ctx.fillRect(0, 0, width, height)
-    
     const img = new Image()
     img.src = canvas.toDataURL('image/png')
     return img
   }
-  
+
   // 拦截Image对象的创建和加载
   const OriginalImage = window.Image
-  window.Image = function(this: HTMLImageElement, width?: number, height?: number) {
+  window.Image = function (this: HTMLImageElement, width?: number, height?: number) {
     const img = new OriginalImage(width, height)
-    
-    // 拦截src设置
     let originalSrc = ''
-    Object.defineProperty(img, 'src', {
-      get() {
-        return originalSrc
-      },
-      set(value: string) {
-        // 如果是Mars3D的logo，替换为透明图片
-        if (value && value.includes(logoSignature)) {
-          console.log('拦截Mars3D logo图片加载，替换为透明图片')
-          const transparentImg = createTransparentImage()
-          originalSrc = transparentImg.src
-          img.setAttribute('src', originalSrc)
-        } else {
-          originalSrc = value
-          img.setAttribute('src', value)
-        }
+    // 只在src属性可配置时defineProperty，防止TypeError
+    try {
+      const desc = Object.getOwnPropertyDescriptor(img, 'src')
+      if (!desc || desc.configurable) {
+        Object.defineProperty(img, 'src', {
+          configurable: true,
+          enumerable: true,
+          get() {
+            return originalSrc
+          },
+          set(value: string) {
+            if (value && value.includes(logoSignature)) {
+              console.log('拦截Mars3D logo图片加载，替换为透明图片')
+              const transparentImg = createTransparentImage()
+              originalSrc = transparentImg.src
+              img.setAttribute('src', originalSrc)
+            } else {
+              originalSrc = value
+              img.setAttribute('src', value)
+            }
+          }
+        })
       }
-    })
-    
+    } catch (e) {
+      // 忽略defineProperty失败，避免报错
+    }
     return img
   } as any
-  
 }
 
 // map构造完成后的一些处理，可以按需注释和选用
@@ -173,15 +175,19 @@ onUnmounted(() => {
   width: 22px;
   height: 100%;
 }
+
 .cesium-toolbar-button:hover img {
   width: 28px;
 }
+
 .cesium-svgPath-svg {
   scale: 0.8;
 }
+
 .cesium-svgPath-svg:hover {
   scale: 1;
 }
+
 .cesium-button .cesium-baseLayerPicker-selected {
   width: 100%;
 }
@@ -190,7 +196,7 @@ onUnmounted(() => {
   width: 100%;
 }
 
-.cesium-viewer-toolbar > .cesium-toolbar-button,
+.cesium-viewer-toolbar>.cesium-toolbar-button,
 .cesium-navigationHelpButton-wrapper,
 .cesium-viewer-geocoderContainer {
   margin-bottom: 5px;
@@ -330,6 +336,7 @@ onUnmounted(() => {
 .mars3d-compass .mars3d-compass-outer {
   fill: rgba(39, 44, 54, 0.8);
 }
+
 .mars3d-compass .mars3d-compass-inner {
   background: rgba(39, 44, 54, 0.8);
   fill: #fff;
@@ -339,27 +346,28 @@ onUnmounted(() => {
 .mars3d-sub-menu {
   background-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
 }
+
 .mars3d-contextmenu-ul {
   border-radius: 2px;
   border-width: 1px;
   border-image: url("//data.mars3d.cn/img/control/border.svg") 1 round stretch;
 }
 
-.mars3d-contextmenu-ul > li > a:hover,
-.mars3d-sub-menu > li > a:hover,
-.mars3d-contextmenu-ul > li > a:focus,
-.mars3d-sub-menu > li > a:focus,
-.mars3d-contextmenu-ul > li > .active,
-.mars3d-sub-menu > li > .active {
+.mars3d-contextmenu-ul>li>a:hover,
+.mars3d-sub-menu>li>a:hover,
+.mars3d-contextmenu-ul>li>a:focus,
+.mars3d-sub-menu>li>a:focus,
+.mars3d-contextmenu-ul>li>.active,
+.mars3d-sub-menu>li>.active {
   background-color: var(--mars-hover-color, #3ea6ff);
 }
 
-.mars3d-contextmenu-ul > .active > a,
-.mars3d-sub-menu > .active > a,
-.mars3d-contextmenu-ul > .active > a:hover,
-.mars3d-sub-menu > .active > a:hover,
-.mars3d-contextmenu-ul > .active > a:focus,
-.mars3d-sub-menu > .active > a:focus {
+.mars3d-contextmenu-ul>.active>a,
+.mars3d-sub-menu>.active>a,
+.mars3d-contextmenu-ul>.active>a:hover,
+.mars3d-sub-menu>.active>a:hover,
+.mars3d-contextmenu-ul>.active>a:focus,
+.mars3d-sub-menu>.active>a:focus {
   background-color: var(--mars-hover-color, #3ea6ff);
 }
 
@@ -383,6 +391,7 @@ onUnmounted(() => {
 .mars3d-popup-content {
   margin: 15px;
 }
+
 .mars3d-popup-btn-custom {
   padding: 3px 10px;
   border: 1px solid #209ffd;
@@ -411,6 +420,7 @@ onUnmounted(() => {
 .mars3d-tooltip-right:before {
   border-right-color: var(--mars-bg-base, rgba(23, 49, 71, 0.8));
 }
+
 .mars3d-template-content label {
   padding-right: 6px;
 }
