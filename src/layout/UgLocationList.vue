@@ -15,7 +15,7 @@
           <span class="section-title-text">{{ section.title }}</span>
           <span v-if="romantic" class="romantic-section-flower">❀</span>
         </div>
-        <ul v-show="!collapsedSections[idx]">
+        <ul v-show="!collapsedSections[idx]" class="ug-float-list-ul-scroll">
           <li v-for="item in section.items" :key="item.id" :class="['ug-float-list-item', { 'romantic-list-item': romantic }]" @click="handleClick(item)">
             <span v-if="romantic" class="romantic-heart-mini">♥</span>
             <span class="romantic-item-text" v-if="romantic">{{ item.name }}</span>
@@ -28,15 +28,23 @@
 </template>
 
 <script setup lang="ts">
-import { flyToLatLng, flyToPosition, CameraView } from "../data/mapUtils";
-import { defineProps, computed, ref } from "vue";
-import { locationListData, LocationListSection } from "../data/locationListData";
+import { flyToPosition } from "../data/mapUtils";
+import { computed, ref } from "vue";
+import { getLocationListData } from "../data/locationListData";
+import type { LocationListSection } from "../data/locationListData";
 
 const props = defineProps<{ mapInstance: any; show: boolean; romantic?: boolean }>();
 const romantic = computed(() => props.romantic ?? false);
 
-const locationList: LocationListSection[] = locationListData;
-const collapsedSections = ref<boolean[]>(locationList.map(() => false));
+// 动态获取定位列表，支持模式切换
+const locationList = computed<LocationListSection[]>(() => getLocationListData(romantic.value));
+const collapsedSections = ref<boolean[]>([]);
+
+// 监听 locationList 变化，自动重置折叠状态
+import { watch } from "vue";
+watch(locationList, (newList) => {
+  collapsedSections.value = newList.map(() => false);
+}, { immediate: true });
 
 function toggleSection(idx: number) {
   collapsedSections.value[idx] = !collapsedSections.value[idx];
@@ -440,4 +448,55 @@ function handleClick(item: any) {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+/* 单个section的ul滚动条样式，最大高度自适应 */
+/* section 列表滚动，且不被父级 overflow:hidden 裁切 */
+/* section 列表滚动，简洁风格 */
+.ug-float-list-ul-scroll {
+  max-height: 220px;
+  min-height: 0;
+  overflow-y: auto !important;
+  padding-right: 4px;
+  margin: 0;
+  background: transparent;
+  position: relative;
+  z-index: 2;
+}
+
+/* 极细极简滚动条，兼容主流Webkit内核浏览器 */
+.ug-float-list-ul-scroll::-webkit-scrollbar {
+  width: 7px !important;
+  height: 7px !important;
+  background: transparent !important;
+}
+.ug-float-list-ul-scroll::-webkit-scrollbar-thumb {
+  background: #ffaef3 !important;
+  border-radius: 8px !important;
+  min-height: 30px !important;
+  border: none !important;
+}
+.ug-float-list-ul-scroll::-webkit-scrollbar-thumb:hover {
+  background: #ff68b9 !important;
+}
+.ug-float-list-ul-scroll::-webkit-scrollbar-corner {
+  background: transparent !important;
+}
+.ug-float-list-ul-scroll::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* 让section父容器不裁切ul滚动条 */
+.ug-float-list > div,
+.romantic-list > div {
+  overflow: visible !important;
+}
+
+/* 让ul和li的父容器撑满，避免overflow被父级hidden裁切 */
+.ug-float-list,
+.romantic-list {
+  overflow: visible !important;
+}
+
 </style>

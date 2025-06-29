@@ -19,38 +19,61 @@ export interface LocationListSection {
 
 import { nanchangSpots } from "./famousSpots/nanchangSpots";
 import { ugDormData } from "./jxufeMap/jxufeData";
+import { loveSpots } from "./loveVestige/loveSpots";
 
-export const locationListData: LocationListSection[] = [
-  {
-    title: "校区定位",
-    items: [
+export function getLocationListData(isRomantic: boolean): LocationListSection[] {
+  if (isRomantic) {
+    return [
       {
-        id: ugDormData.id,
-        name: ugDormData.name,
-        type: "dorm",
-        cameraView: {
-          lng: ugDormData.position[0],
-          lat: ugDormData.position[1],
-          alt: 380,
-          heading: 0,
-          pitch: -90
-        }
+        title: "我们的足迹",
+        items: loveSpots.map((s, idx) => ({
+          id: `love-${idx}`,
+          name: s.name,
+          type: "spot",
+          cameraView: {
+            lng: s.position[0],
+            lat: s.position[1],
+            alt: s.position[2] + 300,
+            heading: 0,
+            pitch: -90
+          }
+        }))
       }
-    ]
-  },
-  {
-    title: "南昌著名景点",
-    items: nanchangSpots.map((s, idx) => ({
-      id: `spot-${idx}`,
-      name: s.name,
-      type: "spot",
-      cameraView: {
-        lng: s.position[0],
-        lat: s.position[1],
-        alt: 300,
-        heading: 0,
-        pitch: -90
+    ];
+  } else {
+    return [
+      {
+        title: "校区定位",
+        items: [
+          {
+            id: ugDormData.id,
+            name: ugDormData.name,
+            type: "dorm",
+            cameraView: {
+              lng: ugDormData.position[0],
+              lat: ugDormData.position[1],
+              alt: 380,
+              heading: 0,
+              pitch: -90
+            }
+          }
+        ]
+      },
+      {
+        title: "南昌著名景点",
+        items: nanchangSpots.map((s, idx) => ({
+          id: `spot-${idx}`,
+          name: s.name,
+          type: "spot",
+          cameraView: {
+            lng: s.position[0],
+            lat: s.position[1],
+            alt: 300,
+            heading: 0,
+            pitch: -90
+          }
+        }))
       }
-    }))
+    ];
   }
-];
+}
