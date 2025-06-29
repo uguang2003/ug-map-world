@@ -1,9 +1,11 @@
 <template>
-  <div class="ug-app-layout">
+  <div class="ug-app-layout" :class="{ 'romantic-mode': isRomantic }">
     <div class="ug-main">
       <MarsMap :url="configUrl" map-key="ug-default-map" @onload="marsOnload" />
-      <UgLocationList :mapInstance="mapInstance" :show="showLocationList" />
-      <UgHeader class="ug-header-float" :showList="showLocationList" @toggle-list="toggleLocationList" />
+      <UgLocationList :mapInstance="mapInstance" :show="showLocationList" :romantic="isRomantic" />
+      <UgHeader class="ug-header-float" :showList="showLocationList" :romantic="isRomantic"
+        @toggle-list="toggleLocationList" @toggle-romantic="toggleRomantic" />
+      <RomanticMask :show="isRomantic" />
     </div>
   </div>
 </template>
@@ -12,15 +14,21 @@
 import MarsMap from "./components/mars-work/mars-map.vue";
 import UgHeader from "./layout/UgHeader.vue";
 import UgLocationList from "./layout/UgLocationList.vue";
+import RomanticMask from "./components/RomanticMask.vue";
 import { initMap } from "./data/mapInit";
 import { ref } from "vue";
 const configUrl = "config/config.json";
 
 const mapInstance = ref<any>(null);
 const showLocationList = ref(false);
+const isRomantic = ref(false);
 
 const toggleLocationList = () => {
   showLocationList.value = !showLocationList.value;
+};
+
+const toggleRomantic = () => {
+  isRomantic.value = !isRomantic.value;
 };
 
 const marsOnload = (map: any) => {
@@ -35,6 +43,23 @@ const marsOnload = (map: any) => {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background: #f7faf7;
+  transition: background 0.5s;
+}
+
+.romantic-mode {
+  background: linear-gradient(135deg, #ffe4ec 0%, #ffe0f7 100%) !important;
+  animation: romantic-bg-float 8s ease-in-out infinite alternate;
+}
+
+@keyframes romantic-bg-float {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 100% 50%;
+  }
 }
 
 .ug-main {

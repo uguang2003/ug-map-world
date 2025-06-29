@@ -1,14 +1,17 @@
 <template>
-  <header class="ug-header">
-    <h1 class="ug-title">UG的地图世界</h1>
-    <button class="ug-list-toggle-btn" :class="{ expanded: showList }" @click="$emit('toggle-list')" title="显示/隐藏定位列表">
+  <header :class="['ug-header', { 'romantic-header': romantic }]">
+    <h1 :class="['ug-title', { 'romantic-title': romantic }]">UG的地图世界</h1>
+    <button class="ug-list-toggle-btn" :class="[{ expanded: showList }, romantic ? 'romantic-btn' : '']"
+      @click="$emit('toggle-list')" title="显示/隐藏定位列表">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="2" />
-        <path v-if="!showList" d="M8 12h8M12 8v8" stroke="#fff" stroke-width="2" stroke-linecap="round" />
-        <path v-else d="M8 12h8" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+        <circle cx="12" cy="12" r="10" :stroke="romantic ? '#d81b60' : '#fff'" stroke-width="2" />
+        <path v-if="!showList" d="M8 12h8M12 8v8" :stroke="romantic ? '#d81b60' : '#fff'" stroke-width="2"
+          stroke-linecap="round" />
+        <path v-else d="M8 12h8" :stroke="romantic ? '#d81b60' : '#fff'" stroke-width="2" stroke-linecap="round" />
       </svg>
     </button>
-    <button class="ug-romantic-btn" @click="$emit('toggle-romantic')" title="进入女朋友模式">
+    <button class="ug-romantic-btn" :class="romantic ? 'romantic-btn' : ''" @click="$emit('toggle-romantic')"
+      title="进入女朋友模式">
       <span class="heart-icon">❤</span>
     </button>
   </header>
@@ -17,8 +20,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 const emit = defineEmits(['toggle-list', 'toggle-romantic']);
-const props = defineProps<{ showList?: boolean }>();
+const props = defineProps<{ showList?: boolean; romantic?: boolean }>();
 const showList = computed(() => props.showList ?? false);
+const romantic = computed(() => props.romantic ?? false);
 </script>
 
 <style scoped>
@@ -29,6 +33,13 @@ const showList = computed(() => props.showList ?? false);
   align-items: center;
   z-index: 10;
   position: relative;
+  background: transparent;
+}
+
+.romantic-header {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-bottom: none !important;
 }
 
 .ug-title {
@@ -45,6 +56,12 @@ const showList = computed(() => props.showList ?? false);
     1px -1px 0 #222,
     -1px -1px 0 #222;
   flex: 1;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.romantic-title {
+  color: #d81b60 !important;
+  text-shadow: 0 2px 12px #ffb6c1cc, 0 1px 0 #fff0f5, 1px 1px 0 #ffb6c1cc;
 }
 
 .ug-romantic-btn {
@@ -65,6 +82,14 @@ const showList = computed(() => props.showList ?? false);
   align-items: center;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   position: relative;
+  border: 2px solid transparent;
+}
+
+.romantic-btn {
+  background: linear-gradient(90deg, #ffb6c1 0%, #ffe4e1 100%) !important;
+  color: #d81b60 !important;
+  box-shadow: 0 2px 8px #ffb6c1cc !important;
+  border: 2px solid #fff0f5 !important;
 }
 
 .ug-romantic-btn:hover {
@@ -123,6 +148,7 @@ const showList = computed(() => props.showList ?? false);
   box-shadow: 0 2px 8px #0002;
   position: relative;
   overflow: visible;
+  border: 2px solid transparent;
 }
 
 .ug-list-toggle-btn:hover {
@@ -135,6 +161,13 @@ const showList = computed(() => props.showList ?? false);
   background: linear-gradient(90deg, #ffb6c1 0%, #ffe4e1 100%);
   box-shadow: 0 4px 16px #ffb6c1cc;
   transform: scale(1.08) rotate(0deg);
+}
+
+.romantic-btn {
+  background: linear-gradient(90deg, #ffb6c1 0%, #ffe4e1 100%) !important;
+  color: #d81b60 !important;
+  box-shadow: 0 2px 8px #ffb6c1cc !important;
+  border: 2px solid #fff0f5 !important;
 }
 
 .ug-list-toggle-btn svg {
