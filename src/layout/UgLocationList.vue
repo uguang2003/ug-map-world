@@ -8,40 +8,67 @@
         <div class="romantic-title-divider"></div>
       </div>
       <div v-else class="ug-float-list-title">快速定位</div>
-      <div v-for="(section, idx) in locationList" :key="section.title">
-        <div :class="[ {'ug-float-list-section-title': !romantic }, { 'romantic-section-title': romantic }, collapsedSections[idx] ? 'collapsed' : '']"
-          @click="toggleSection(idx)">
-          <span v-if="romantic" class="romantic-arrow" :class="{ collapsed: collapsedSections[idx] }">💗</span>
-          <span class="section-title-text">{{ section.title }}</span>
-          <span v-if="romantic" class="romantic-section-flower">❀</span>
-        </div>
-        <ul v-show="!collapsedSections[idx]" class="ug-float-list-ul-scroll">
-          <li v-for="item in section.items" :key="item.id" :class="['ug-float-list-item', { 'romantic-list-item': romantic }]" @click="handleClick(item)">
-            <span v-if="romantic" class="romantic-heart-mini">♥</span>
-            <span class="romantic-item-text" v-if="romantic">{{ item.name }}</span>
-            <template v-else>{{ item.name }}</template>
+      <!-- romantic 模式下，所有点合并为一组，支持高亮和点击联动 -->
+      <template v-if="romantic">
+        <!-- <div class="romantic-section-title">
+          <span class="romantic-arrow">💗</span>
+          <span class="section-title-text ">爱情点位</span>
+          <span class="romantic-section-flower">❀</span>
+        </div> -->
+        <ul class="ug-float-list-ul-scroll">
+          <li v-for="(item, idx) in flatLoveList" :key="item.id"
+              :class="['ug-float-list-item', 'romantic-list-item', { 'active': isActiveLove(idx) }]"
+              @click="handleLoveClick(item, idx)">
+            <span class="romantic-heart-mini">♥</span>
+            <span class="romantic-item-text">{{ item.name }}</span>
           </li>
         </ul>
-      </div>
+      </template>
+      <!-- 非 romantic 模式下，原有分组渲染 -->
+      <template v-else>
+        <div v-for="(section, idx) in locationList" :key="section.title">
+          <div :class="['ug-float-list-section-title', collapsedSections[idx] ? 'collapsed' : '']"
+            @click="toggleSection(idx)">
+            <span class="section-title-text">{{ section.title }}</span>
+          </div>
+          <ul v-show="!collapsedSections[idx]" class="ug-float-list-ul-scroll">
+            <li v-for="item in section.items" :key="item.id" class="ug-float-list-item" @click="handleClick(item)">
+              {{ item.name }}
+            </li>
+          </ul>
+        </div>
+      </template>
     </aside>
   </transition>
 </template>
 
 <script setup lang="ts">
 import { flyToPosition } from "../data/mapUtils";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { getLocationListData } from "../data/locationListData";
 import type { LocationListSection } from "../data/locationListData";
 
-const props = defineProps<{ mapInstance: any; show: boolean; romantic?: boolean }>();
-const romantic = computed(() => props.romantic ?? false);
+// 新增：支持 activeLoveIdx 联动
+const props = defineProps<{
+  mapInstance: any;
+  show: boolean;
+  romantic?: boolean;
+  activeLoveIdx?: number; // 当前高亮的爱情点索引
+}>();
+const emits = defineEmits<{ (e: 'update:activeLoveIdx', idx: number): void }>();
 
+const romantic = computed(() => props.romantic ?? false);
 // 动态获取定位列表，支持模式切换
 const locationList = computed<LocationListSection[]>(() => getLocationListData(romantic.value));
 const collapsedSections = ref<boolean[]>([]);
 
+// 仅 romantic 模式下，所有点合并为一维数组
+const flatLoveList = computed(() => {
+  if (!romantic.value) return [];
+  return locationList.value.flatMap(section => section.items);
+});
+
 // 监听 locationList 变化，自动重置折叠状态
-import { watch } from "vue";
 watch(locationList, (newList) => {
   collapsedSections.value = newList.map(() => false);
 }, { immediate: true });
@@ -50,6 +77,20 @@ function toggleSection(idx: number) {
   collapsedSections.value[idx] = !collapsedSections.value[idx];
 }
 
+// 计算当前高亮的点（仅 romantic 模式下）
+function isActiveLove(idx: number) {
+  return romantic.value && props.activeLoveIdx === idx;
+}
+
+// 处理点击点位：emit 索引，地图定位
+function handleLoveClick(item: any, idx: number) {
+  emits("update:activeLoveIdx", idx);
+  if (props.mapInstance && item.cameraView) {
+    flyToPosition(props.mapInstance, item.cameraView);
+  }
+}
+
+// 非 romantic 模式下的普通点击
 function handleClick(item: any) {
   if (props.mapInstance && item.cameraView) {
     flyToPosition(props.mapInstance, item.cameraView);
@@ -58,6 +99,15 @@ function handleClick(item: any) {
 </script>
 
 <style scoped>
+
+/* 高亮当前爱情点位 */
+.romantic-list-item.active {
+  background: linear-gradient(90deg, #ffd6e6 0%, #f8bbd0 100%) !important;
+  color: #c2185b !important;
+  box-shadow: 0 2px 12px #ffb6c1cc;
+  transform: scale(1.06);
+  border: 2px solid #f06292;
+}
 
 /* 保证romantic模式下collapsed时不会100%宽度 */
 .romantic-section-title.collapsed {
@@ -281,6 +331,7 @@ function handleClick(item: any) {
   transition: background 0.3s;
   overflow: hidden;
   box-sizing: border-box;
+  height: 60%;
 }
 
 .romantic-list-title {
@@ -391,7 +442,7 @@ function handleClick(item: any) {
   font-family: 'Comic Sans MS', 'Segoe Script', 'FangSong', cursive, sans-serif;
   font-size: 15px;
   font-weight: 600;
-  margin: 0 18px 10px 18px;
+  margin: 2px 18px 10px 18px;
   padding: 12px 18px 12px 36px;
   box-shadow: 0 1px 4px #ffb6c1cc;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
@@ -457,9 +508,11 @@ function handleClick(item: any) {
   overflow-y: auto !important;
   padding-right: 4px;
   margin: 0;
+  margin-top: 10px;
   background: transparent;
   position: relative;
   z-index: 2;
+  height: 88%;
 }
 
 /* 极细极简滚动条，兼容主流Webkit内核浏览器 */

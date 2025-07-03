@@ -4,9 +4,19 @@ import { handleDormLabelClick } from "./jxufeMap/jxufeMapActions";
 import { addNanchangSpots } from "./famousSpots/nanchangSpots";
 import { addLoveSpots } from "./loveVestige/loveSpots";
 
-export function initMap(map: mars3d.Map) {
+// 保证全局只存在一个 graphicLayer
+let globalGraphicLayer: any = null;
+
+export function initMap(map: mars3d.Map, isRomantic: boolean) {
+  // 清除旧图层
+  if (globalGraphicLayer) {
+    map.removeLayer(globalGraphicLayer, true);
+    globalGraphicLayer = null;
+  }
+
   const graphicLayer = new mars3d.layer.GraphicLayer();
   map.addLayer(graphicLayer);
+  globalGraphicLayer = graphicLayer;
 
   // 绑定常用事件
   graphicLayer.on(mars3d.EventType.click, (event: any) => {
@@ -31,11 +41,13 @@ export function initMap(map: mars3d.Map) {
     } as any,
   ]);
 
-  // 添加数据
-  jxufeData.addJXUFE(graphicLayer);
-
-  // 添加南昌著名景点标注
-  addNanchangSpots(graphicLayer);
-  // 添加爱情专属地点
-  addLoveSpots(graphicLayer);
+  if (isRomantic) {
+    // 添加爱情专属地点
+    addLoveSpots(graphicLayer);
+  } else {
+    // 添加数据
+    jxufeData.addJXUFE(graphicLayer);
+    // 添加南昌著名景点标注
+    addNanchangSpots(graphicLayer);
+  }
 }

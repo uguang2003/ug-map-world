@@ -2,10 +2,21 @@
   <div class="ug-app-layout" :class="{ 'romantic-mode': isRomantic }">
     <div class="ug-main">
       <MarsMap :url="configUrl" map-key="ug-default-map" @onload="marsOnload" />
-      <UgLocationList :mapInstance="mapInstance" :show="showLocationList" :romantic="isRomantic" />
+      <UgLocationList
+        :mapInstance="mapInstance"
+        :show="showLocationList"
+        :romantic="isRomantic"
+        :activeLoveIdx="activeLoveIdx"
+        @update:activeLoveIdx="onActiveLoveIdxUpdate"
+      />
       <UgHeader class="ug-header-float" :showList="showLocationList" :romantic="isRomantic"
         @toggle-list="toggleLocationList" @toggle-romantic="toggleRomantic" />
-      <RomanticMask :show="isRomantic" />
+      <RomanticMask
+        :mapInstance="mapInstance"
+        :show="isRomantic"
+        :activeLoveIdx="activeLoveIdx"
+        @update:activeLoveIdx="onActiveLoveIdxUpdate"
+      />
     </div>
   </div>
 </template>
@@ -19,9 +30,15 @@ import { initMap } from "./data/mapInit";
 import { ref } from "vue";
 const configUrl = "config/config.json";
 
+
 const mapInstance = ref<any>(null);
 const showLocationList = ref(false);
 const isRomantic = ref(false);
+const activeLoveIdx = ref(0);
+// 联动处理函数
+function onActiveLoveIdxUpdate(idx: number) {
+  activeLoveIdx.value = idx;
+}
 
 const toggleLocationList = () => {
   showLocationList.value = !showLocationList.value;
@@ -29,11 +46,15 @@ const toggleLocationList = () => {
 
 const toggleRomantic = () => {
   isRomantic.value = !isRomantic.value;
+  if (mapInstance.value) {
+    // 重新初始化地图，只显示对应点位
+    initMap(mapInstance.value, isRomantic.value);
+  }
 };
 
 const marsOnload = (map: any) => {
   mapInstance.value = map;
-  initMap(map);
+  initMap(map, isRomantic.value);
 };
 </script>
 

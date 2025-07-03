@@ -86,3 +86,4 @@ export function addLoveSpots(graphicLayer: any) {
     graphicLayer.addGraphic(point);
   });
 }
+
