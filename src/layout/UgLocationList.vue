@@ -61,7 +61,6 @@ const romantic = computed(() => props.romantic ?? false);
 // 动态获取定位列表，支持模式切换
 const locationList = computed<LocationListSection[]>(() => getLocationListData(romantic.value));
 const collapsedSections = ref<boolean[]>([]);
-
 // 仅 romantic 模式下，所有点合并为一维数组
 const flatLoveList = computed(() => {
   if (!romantic.value) return [];
@@ -85,9 +84,6 @@ function isActiveLove(idx: number) {
 // 处理点击点位：emit 索引，地图定位
 function handleLoveClick(item: any, idx: number) {
   emits("update:activeLoveIdx", idx);
-  if (props.mapInstance && item.cameraView) {
-    flyToPosition(props.mapInstance, item.cameraView);
-  }
 }
 
 // 非 romantic 模式下的普通点击

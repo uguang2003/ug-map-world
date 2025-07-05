@@ -20,7 +20,7 @@ export function initMap(map: mars3d.Map, isRomantic: boolean) {
 
   // 绑定常用事件
   graphicLayer.on(mars3d.EventType.click, (event: any) => {
-    handleDormLabelClick(map, event);
+
   });
   graphicLayer.on(mars3d.EventType.mouseOver, (event: any) => {
     // 可自定义鼠标移入事件

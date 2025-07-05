@@ -82,7 +82,6 @@ const romantic = computed(() => props.romantic ?? false);
   align-items: center;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   position: relative;
-  border: 2px solid transparent;
 }
 
 .romantic-btn {
@@ -148,7 +147,6 @@ const romantic = computed(() => props.romantic ?? false);
   box-shadow: 0 2px 8px #0002;
   position: relative;
   overflow: visible;
-  border: 2px solid transparent;
 }
 
 .ug-list-toggle-btn:hover {

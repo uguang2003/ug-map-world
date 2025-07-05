@@ -30,13 +30,7 @@ export function getLocationListData(isRomantic: boolean): LocationListSection[] 
           id: `love-${idx}`,
           name: s.name,
           type: "spot",
-          cameraView: {
-            lng: s.position[0],
-            lat: s.position[1],
-            alt: s.position[2] + 300,
-            heading: 0,
-            pitch: -90
-          }
+          cameraView: s.camera
         }))
       }
     ];

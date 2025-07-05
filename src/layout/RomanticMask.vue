@@ -75,13 +75,7 @@ watch(() => props.activeLoveIdx, (idx) => {
 function gotoSpot(idx: number) {
   const spot = loveSpots[idx];
   if (props.mapInstance && spot) {
-    flyToPosition(props.mapInstance, {
-      lng: spot.position[0],
-      lat: spot.position[1],
-      alt: spot.position[2] + 300,
-      heading: 0,
-      pitch: -90
-    });
+    flyToPosition(props.mapInstance, spot.camera);
   }
 }
 
