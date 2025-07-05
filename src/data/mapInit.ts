@@ -1,6 +1,5 @@
 import * as mars3d from "mars3d";
 import { jxufeData } from "./jxufeMap/jxufeData";
-import { handleDormLabelClick } from "./jxufeMap/jxufeMapActions";
 import { addNanchangSpots } from "./famousSpots/nanchangSpots";
 import { addLoveSpots } from "./loveVestige/loveSpots";
 

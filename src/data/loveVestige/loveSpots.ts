@@ -1,5 +1,8 @@
 import * as mars3d from "mars3d";
 
+// 存储所有点位的引用，key为索引
+const loveSpotGraphicsMap = new Map<number, any>();
+
 export const loveSpots = [
   {
     name: "第一次见面的教室",
@@ -94,7 +97,7 @@ export const loveSpots = [
 ];
 
 export function addLoveSpots(graphicLayer: any) {
-  loveSpots.forEach(spot => {
+  loveSpots.forEach((spot, idx) => {
     const point = new mars3d.graphic.PointEntity({
       position: spot.position,
       style: {
@@ -112,7 +115,7 @@ export function addLoveSpots(graphicLayer: any) {
           pixelOffsetY: -30,
         },
       },
-      attr: { spot },
+      attr: { spot, idx },
       popup: `<div style="padding:10px 0;min-width:180px;text-align:center;">
         <div style='font-weight:700;font-size:18px;margin-bottom:8px;'>${spot.name}</div>
         ${spot.image
@@ -121,6 +124,21 @@ export function addLoveSpots(graphicLayer: any) {
       </div>`
     });
     graphicLayer.addGraphic(point);
+    loveSpotGraphicsMap.set(idx, point);
+  });
+}
+
+/**
+ * 根据 idx 显示对应 popup，并关闭其他 popup
+ */
+export function showLoveSpotPopup(idx: number) {
+  loveSpotGraphicsMap.forEach((graphic, i) => {
+    if (i === idx) {
+      // 自动弹出时，弹窗位置更高（只影响自动弹出，不影响手动点击）
+      graphic.openPopup();
+    } else {
+      graphic.closePopup();
+    }
   });
 }
 

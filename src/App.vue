@@ -27,6 +27,7 @@ import UgHeader from "./layout/UgHeader.vue";
 import UgLocationList from "./layout/UgLocationList.vue";
 import RomanticMask from "./layout/RomanticMask.vue";
 import { initMap } from "./data/mapInit";
+import { showLoveSpotPopup } from "./data/loveVestige/loveSpots";
 import { ref } from "vue";
 const configUrl = "config/config.json";
 
@@ -38,6 +39,10 @@ const activeLoveIdx = ref(0);
 // 联动处理函数
 function onActiveLoveIdxUpdate(idx: number) {
   activeLoveIdx.value = idx;
+  // 只在浪漫模式下弹出popup
+  if (isRomantic.value) {
+    showLoveSpotPopup(idx);
+  }
 }
 
 const toggleLocationList = () => {
@@ -49,12 +54,20 @@ const toggleRomantic = () => {
   if (mapInstance.value) {
     // 重新初始化地图，只显示对应点位
     initMap(mapInstance.value, isRomantic.value);
+    // 切换到浪漫模式时，自动弹出当前activeLoveIdx的popup
+    if (isRomantic.value) {
+      showLoveSpotPopup(activeLoveIdx.value);
+    }
   }
 };
 
 const marsOnload = (map: any) => {
   mapInstance.value = map;
   initMap(map, isRomantic.value);
+  // 如果初始就是浪漫模式，弹出当前activeLoveIdx的popup
+  if (isRomantic.value) {
+    showLoveSpotPopup(activeLoveIdx.value);
+  }
 };
 </script>
 
