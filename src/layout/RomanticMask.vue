@@ -47,7 +47,7 @@ watch([isAutoPlaying, () => props.show], ([auto, show]) => {
       } else {
         emits('update:activeLoveIdx', 0);
       }
-    }, 5000);
+    }, 7000);
   }
 });
 

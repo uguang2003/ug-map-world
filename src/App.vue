@@ -17,6 +17,14 @@
         :activeLoveIdx="activeLoveIdx"
         @update:activeLoveIdx="onActiveLoveIdxUpdate"
       />
+      <!-- 女朋友模式音乐播放器 -->
+      <audio
+        ref="romanticAudio"
+        src="music/xintiao.mp3"
+        loop
+        preload="auto"
+        style="display:none;"
+      />
     </div>
   </div>
 </template>
@@ -28,8 +36,10 @@ import UgLocationList from "./layout/UgLocationList.vue";
 import RomanticMask from "./layout/RomanticMask.vue";
 import { initMap } from "./data/mapInit";
 import { showLoveSpotPopup } from "./data/loveVestige/loveSpots";
-import { ref } from "vue";
+import { ref, watch, onMounted } from "vue";
+
 const configUrl = "config/config.json";
+const romanticAudio = ref<HTMLAudioElement | null>(null);
 
 
 const mapInstance = ref<any>(null);
@@ -60,6 +70,27 @@ const toggleRomantic = () => {
     }
   }
 };
+
+// 监听浪漫模式切换，自动播放/暂停音乐
+watch(isRomantic, (val) => {
+  if (romanticAudio.value) {
+    if (val) {
+      romanticAudio.value.currentTime = 0;
+      romanticAudio.value.play();
+    } else {
+      romanticAudio.value.pause();
+    }
+  }
+});
+
+onMounted(() => {
+  // 兼容浏览器自动播放策略，首次用户交互后再播放
+  document.body.addEventListener('click', () => {
+    if (isRomantic.value && romanticAudio.value) {
+      romanticAudio.value.play();
+    }
+  }, { once: true });
+});
 
 const marsOnload = (map: any) => {
   mapInstance.value = map;
