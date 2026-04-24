@@ -10,10 +10,10 @@
         <path v-else d="M8 12h8" :stroke="romantic ? '#d81b60' : '#fff'" stroke-width="2" stroke-linecap="round" />
       </svg>
     </button>
-    <button class="ug-romantic-btn" :class="romantic ? 'romantic-btn' : ''" @click="$emit('toggle-romantic')"
+    <!-- <button class="ug-romantic-btn" :class="romantic ? 'romantic-btn' : ''" @click="$emit('toggle-romantic')"
       title="进入女朋友模式">
       <span class="heart-icon">❤</span>
-    </button>
+    </button> -->
   </header>
 </template>
 
